@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Blackjack Coach</title>
+    <meta name="description" content="Play blackjack and find out after every move whether it was the mathematically best one.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#05130d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Blackjack">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="app/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="app/icon-180.png">
+    <link rel="stylesheet" href="app/app.css">
+</head>
+<body>
+
+<div id="app" class="app">
+
+    <header class="hud">
+        <button class="hud-pill" id="statsButton" aria-label="Session stats">
+            <span class="label">Acc</span>
+            <span id="hudAccuracy">–</span>
+        </button>
+        <button class="hud-pill money" id="bankrollPill" aria-label="Bankroll">
+            <span id="hudBankroll">$500</span>
+        </button>
+        <span class="hud-spacer"></span>
+        <button class="hud-pill icon" id="chartButton" aria-label="Strategy chart">☷</button>
+        <button class="hud-pill icon" id="settingsButton" aria-label="Settings">⚙</button>
+    </header>
+
+    <main class="table">
+
+        <section class="zone">
+            <div class="zone-label">Dealer</div>
+            <div class="hand-row"><div class="hand" id="dealerHand"></div></div>
+            <div id="dealerTotal"></div>
+        </section>
+
+        <section class="banner" id="banner"></section>
+
+        <section class="zone">
+            <div class="hand-row" id="playerHands"></div>
+            <div class="zone-label" id="playerLabel">You</div>
+        </section>
+
+    </main>
+
+    <div class="coach" id="coach" hidden>
+        <button class="coach-head" id="coachHead">
+            <span class="coach-mark" id="coachMark">✓</span>
+            <span class="coach-text">
+                <span class="coach-title" id="coachTitle"></span>
+                <span class="coach-detail" id="coachDetail"></span>
+            </span>
+            <span class="coach-chevron">▲</span>
+        </button>
+        <div class="coach-body" id="coachBody"></div>
+    </div>
+
+    <footer class="controls">
+        <div class="count-line" id="countLine"></div>
+        <div id="controlArea"></div>
+    </footer>
+
+</div>
+
+<div class="scrim" id="scrim"></div>
+
+<section class="sheet" id="statsSheet">
+    <div class="sheet-grip"></div>
+    <h2>This session</h2>
+    <div class="sheet-scroll" id="statsBody"></div>
+</section>
+
+<section class="sheet" id="chartSheet">
+    <div class="sheet-grip"></div>
+    <h2>Basic strategy</h2>
+    <div class="chart-tabs" id="chartTabs">
+        <button data-chart="hard" class="on">Hard</button>
+        <button data-chart="soft">Soft</button>
+        <button data-chart="pairs">Pairs</button>
+    </div>
+    <div class="sheet-scroll" id="chartBody"></div>
+</section>
+
+<section class="sheet" id="settingsSheet">
+    <div class="sheet-grip"></div>
+    <h2>Table rules</h2>
+    <div class="sheet-scroll" id="settingsBody"></div>
+</section>
+
+<script src="src/Utils.js"></script>
+<script src="src/Strategy.js"></script>
+<script src="src/Game.js"></script>
+<script src="app/app.js"></script>
+</body>
+</html>

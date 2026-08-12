@@ -1,0 +1,23 @@
+{
+    "name": "Blackjack Coach",
+    "short_name": "Blackjack",
+    "description": "Play blackjack and find out after every move whether it was the mathematically best one.",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#05130d",
+    "theme_color": "#05130d",
+    "icons": [
+        {
+            "src": "app/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "app/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

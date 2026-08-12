@@ -1,11 +1,16 @@
 {
     "name": "blackjack",
-    "version": "0.0.2",
-    "description": "A small game engine for casino blackjack and a library for calculating hand probabilities.",
+    "version": "0.1.0",
+    "description": "A blackjack game engine, an exact expected value solver, and a touch first web app that grades every decision you make.",
     "author": "Chris Zieba (zieba.chris@gmail.com)",
     "repository": {
         "type": "git",
         "url": "git@github.com:ChrisZieba/blackjack.git"
+    },
+    "scripts": {
+        "test": "node --test test/",
+        "icons": "node tools/make-icons.js",
+        "start": "python3 -m http.server 8080"
     },
     "dependencies": {},
     "devDependencies": {
