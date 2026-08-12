@@ -10,11 +10,15 @@ module.exports = function(grunt) {
                 curly: true,
                 eqnull: true,
                 browser: true,
+                esversion: 6,
                 globals: {
                     jQuery: true,
                     console: true,
                     exports: true,
-                    require: true
+                    require: true,
+                    module: true,
+                    Map: true,
+                    Promise: true
                 },
             }
         },
@@ -25,7 +29,12 @@ module.exports = function(grunt) {
             },
             build: {
                 files: {
-                    'dist/blackjack-<%= pkg.version %>.min.js': ['src/**/*.js']
+                    'dist/blackjack-<%= pkg.version %>.min.js': [
+                        'src/Utils.js',
+                        'src/Strategy.js',
+                        'src/Game.js',
+                        'src/Probability.js'
+                    ]
                 }
             },
         }
