@@ -2,7 +2,7 @@
 
 > A blackjack game engine, an exact expected value solver, and a touch first web app that tells you after every move whether it was the best one available.
 
-**Play it: [chriszieba.github.io/blackjack](https://chriszieba.github.io/blackjack/)** — add it to your home screen on iOS and it runs full screen, offline included.
+**Play it: [arnauddc807.github.io/blackjack](https://arnauddc807.github.io/blackjack/)** — add it to your home screen on iOS and it runs full screen, offline included.
 
 The engine deals, splits, doubles, surrenders, peeks for a natural and settles the money. The strategy library solves the hand you are actually holding against the cards actually left in the shoe, so the advice is composition dependent rather than a lookup in a printed chart. The app is the two of them wired together with a coach that grades every decision in cents.
 
