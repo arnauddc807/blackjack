@@ -1,7 +1,7 @@
 {
     "name": "Blackjack Coach",
     "short_name": "Blackjack",
-    "description": "Play blackjack and find out after every move whether it was the mathematically best one.",
+    "description": "Play blackjack on your phone and find out after every move whether it was the mathematically best one.",
     "start_url": "./",
     "scope": "./",
     "display": "standalone",

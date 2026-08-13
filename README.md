@@ -1,10 +1,10 @@
 # Blackjack Coach
 
-Learn blackjack by playing it. Every move you make is scored against the mathematically best one, in cents, before the next card lands.
+Play blackjack on your phone and find out after every move whether it was the mathematically best one.
 
 ### ▶︎ [arnauddc807.github.io/blackjack](https://arnauddc807.github.io/blackjack/)
 
-Built for a phone. On iOS, tap Share → *Add to Home Screen* and it opens full screen and plays without a signal.
+On iOS, tap Share → *Add to Home Screen* and it opens full screen and plays without a signal.
 
 <p>
   <img src="app/screens/table.png" alt="A hand of sixteen against a six" width="30%">
@@ -14,54 +14,37 @@ Built for a phone. On iOS, tap Share → *Add to Home Screen* and it opens full 
 
 ## The idea
 
-Sixteen against a six is the hand everyone gets wrong, and winning it teaches you nothing. In the screenshot above the player stood, the dealer busted, and the player made $25 — and the coach still says the best play on the table was worth **minus thirteen cents on the dollar**. Standing was right. The hand was a loser anyway. Results are noise; only the decision is yours.
+Sixteen against a six is the hand everyone gets wrong, and winning it teaches you nothing. In the screenshot above the player stood, the dealer busted, the player made $25 — and the coach still reports that the best play on the table was worth **minus thirteen cents on the dollar**. Standing was right. The hand was a loser anyway.
 
-So the app grades decisions, never outcomes:
-
-| Verdict | Meaning |
-| --- | --- |
-| ✓ | You picked the best action available. |
-| ≈ | Another action was better by less than half a cent on the dollar. Call it even. |
-| ✕ | You gave something up, and here is exactly how much. |
-
-Expand any verdict and you get the expected value of standing, hitting, doubling, splitting and surrendering side by side, the dealer's bust chance, and a note when the shoe in front of you disagrees with the printed chart.
+So the app grades decisions, never outcomes: ✓ you picked the best action, ≈ another was better by less than half a cent on the dollar, ✕ you gave something up, and here is how much. Expand a verdict for the expected value of every option side by side, the dealer's bust chance, and a note when the shoe disagrees with the printed chart.
 
 ## What "best" means here
 
-Most trainers check your move against a basic strategy chart. A chart is an average: it was computed once, for a full shoe, and it cannot know that four aces and eleven tens have already gone by.
+Most trainers check your move against a basic strategy chart. A chart is an average: computed once, for a full shoe, blind to the four aces and eleven tens that have already gone by.
 
-This one solves the hand you are actually holding against the cards actually left in the shoe. It walks the dealer's every possible draw, recursively, taking each card with the probability it really has, and does the same for every way you might play the hand out. The number it reports is exact, not simulated — no Monte Carlo, no lookup, no infinite-deck approximation. As a shoe drains, the advice moves with it, and the app tells you when it has moved off the book.
+This one solves the hand you are holding against the cards actually left in the shoe. It walks the dealer's every possible draw, taking each card with the probability it really has, and does the same for every way you might play the hand out. The answer is exact — no simulation, no lookup, no infinite-deck approximation — so as a shoe drains the advice moves with it, and the app says so when it moves off the book. Two standard simplifications: the halves of a split are valued independently, and the dealer's peek is applied when the hole card is drawn rather than folded back into your own draw probabilities. Neither changes which action wins.
 
-Two simplifications are worth naming: the two halves of a split are valued independently, and the dealer's peek for a natural is applied when the hole card is drawn rather than folded back into your own draw probabilities. Both are standard practice, and neither changes which action wins.
+## At the table
 
-## Playing
-
-- **Chips and a bankroll.** Bet 5, 25 or 100. Blackjack pays 3:2.
-- **Everything a real table offers.** Splits to four hands, resplits, doubles, double after split, late surrender, insurance, and a dealer who peeks for a natural.
-- **A shoe with a cut card.** It runs down and gets reshuffled, and you can put the Hi-Lo running and true count on screen if you want to practise keeping it.
-- **The sound of a table.** Cards on felt, chips into the box, the riffle of a new shoe, and a couple of notes for the verdict and the payout — all synthesised in the browser, so there is nothing to download. Off with one tap in settings, and iOS's silent switch mutes it like anything else.
-- **Your own rules.** One to eight decks, dealer hits or stands on soft 17, double after split on or off, surrender on or off. Change any of them and the coach, the chart and the odds all follow.
-
-## Learning
-
-- **Coach after.** The default. Play your hand, then find out.
-- **Coach before.** The best action is ringed before you commit. Training wheels.
-- **Coach off.** Just deal.
-- **Session record.** Accuracy, current and best streak, hands played, money won or lost, and the total expected value you have handed back — plus your recent mistakes, each with the play that would have been better and what it cost.
-- **The chart.** Hard totals, soft totals and pairs, drawn for your table's rules and generated by the same solver that grades you, so the two can never disagree. Your current hand is outlined in its cell.
+- **Chips and a bankroll**, blackjack at 3:2, and everything a real table offers: splits to four hands, doubles, double after split, late surrender, insurance, and a dealer who peeks for a natural.
+- **A shoe with a cut card** that runs down and gets reshuffled, with an optional Hi-Lo running and true count on screen.
+- **Your own rules.** One to eight decks, dealer hits or stands on soft 17, double after split, surrender. The coach, the chart and the odds all follow.
+- **Coaching after your move, before it, or not at all.** Set to *Before* and the best action is ringed while you decide.
+- **A session record**: accuracy, streaks, money, the expected value you have handed back, and your recent mistakes with the play that would have been better.
+- **The chart**, drawn for your table's rules by the same solver that grades you, with your current hand outlined in its cell.
+- **Sound**, synthesised in the browser — cards on felt, chips, the riffle of a new shoe, a couple of notes for the verdict. Off with one tap.
 
 ## Under the hood
 
-No framework, no build step, no dependencies. Three libraries and an interface, served as files.
+No framework, no build step, no dependencies — three libraries and an interface, served as files.
 
-| File | What it does |
+| File | |
 | --- | --- |
 | `src/Game.js` | The table: shoe, cut card, bets, splits, doubles, surrender, insurance, the peek, settlement. |
 | `src/Strategy.js` | The solver, plus the basic strategy chart. |
 | `src/Utils.js` | Hand scoring, soft totals, card counting helpers. |
 | `src/Probability.js` | The original win/lose/push probability library, untouched. |
-| `app/sound.js` | Every noise the table makes, built from oscillators and filtered noise. |
-| `app/` | The interface, the styles, and the worker the solver runs in. |
+| `app/` | Interface, styles, sound, and the worker the solver runs in. |
 
 ```js
 var game = new Blackjack.Game('player', 'house', { numberOfDecks: 6, dealerHitSoft17: true });
@@ -81,42 +64,26 @@ analysis.basic;       // "Double" — what the chart says
 analysis.dealer.bust; // 0.4393
 ```
 
-Expected values are in units of the original bet, so `+1` is winning it outright and `-0.5` is the cost of a surrender.
+Expected values are in units of the original bet: `+1` wins it outright, `-0.5` is the cost of a surrender. Solving a split against six decks takes a couple of hundred milliseconds cold and single digits once the memo tables are warm, so the app runs it in a web worker and asks the moment a decision opens — the verdict is waiting before you tap.
 
-### Game
+**Game** — `deal(bet)` `getActions()` `hit()` `stand()` `double()` `split()` `surrender()` `insure(take)` `playDealer()` `getHands()` `getHand()` `getState()` `getResults()` `getNet()` `getBankroll()` `getUnseenCounts()` `getCount()` `getShoe()` `getPlayer()` `getDealer()` `getRules()` `needsShuffle()`, with options for decks, soft 17, payout, penetration, surrender, double after split, split limits, insurance, bankroll and minimum bet.
 
-`deal(bet)` · `getActions()` · `hit()` `stand()` `double()` `split()` `surrender()` · `insure(take)` · `playDealer()` · `getHands()` `getHand()` · `getState()` · `getResults()` `getNet()` `getBankroll()` · `getUnseenCounts()` · `getCount()` · `getShoe()` `getPlayer()` `getDealer()` `getTurn()` `setTurn()` `getRules()` `needsShuffle()`
+**Strategy** — `analyze(options)` for every legal action's expected value, `dealer(up, counts, rules)` for the dealer's final totals, `basic(hand, up, rules, allowed)` for the textbook play, `reset()` to drop the memo tables.
 
-Options: `numberOfDecks`, `dealerHitSoft17`, `blackjackPayout`, `penetration`, `surrender`, `doubleAfterSplit`, `maxSplitHands`, `resplitAces`, `insurance`, `bankroll`, `minBet`.
-
-### Strategy
-
-`analyze(options)` — every legal action's expected value, the best of them, the chart's answer, and the dealer's final total distribution.
-`dealer(up, counts, rules)` — the chance the dealer ends on 17 through 21, busts, or turns over a natural.
-`basic(hand, up, rules, allowed)` — the textbook play for four to eight decks.
-`reset()` — drop the memo tables.
-
-### Utils
-
-`score(cards)` · `hand(cards)` · `value(card)` · `isBlackjack(cards)` · `counts(cards)` · `total(counts)` · `runningCount(cards)`
-
-### Speed
-
-Solving a split against a six-deck shoe takes a couple of hundred milliseconds cold and single digits once the memo tables are warm. The app runs it in a web worker and asks for the answer the moment a decision opens, so the verdict is already waiting when you tap.
+**Utils** — `score(cards)` `hand(cards)` `value(card)` `isBlackjack(cards)` `counts(cards)` `total(counts)` `runningCount(cards)`
 
 ## Development
 
 ```
-npm test      # 21 tests: the engine's rules and payouts, and a sweep of every
-              # hard total, soft total and pair against all ten upcards, checking
-              # that the exact solver and the printed chart agree
-npm start     # serve the app at http://localhost:8080
+npm test      # 21 tests: the engine's rules and payouts, and a sweep of every hard
+              # total, soft total and pair against all ten upcards, checking that
+              # the exact solver and the printed chart agree
+npm start     # serve at http://localhost:8080
 npm run icons # redraw the app icons
-grunt         # lint and build dist/
 ```
 
-The site is the repository: `index.html` at the root, everything beside it, all paths relative. Whatever is on the default branch is what is live on GitHub Pages — there is nothing to compile and no artifact to publish.
+The site is the repository: `index.html` at the root, everything beside it, all paths relative. Whatever is on the default branch is what is live.
 
 ## Credit
 
-The game engine and probability library began as [Chris Zieba's blackjack](https://github.com/ChrisZieba/blackjack), and the write-up behind it is [here](http://chriszieba.com/2015/03/30/blackjack-probabilities). [MIT](LICENSE) licensed.
+The game engine and probability library began as [Chris Zieba's blackjack](https://github.com/ChrisZieba/blackjack); the write-up behind it is [here](http://chriszieba.com/2015/03/30/blackjack-probabilities). [MIT](LICENSE) licensed.

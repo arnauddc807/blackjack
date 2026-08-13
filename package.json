@@ -1,7 +1,7 @@
 {
     "name": "blackjack",
     "version": "0.1.0",
-    "description": "A blackjack game engine, an exact expected value solver, and a touch first web app that grades every decision you make.",
+    "description": "Play blackjack on your phone and find out after every move whether it was the mathematically best one.",
     "author": "Chris Zieba (zieba.chris@gmail.com)",
     "repository": {
         "type": "git",
