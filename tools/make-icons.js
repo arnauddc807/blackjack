@@ -12,7 +12,10 @@ var zlib = require('zlib');
 var SIZES = [
     { size: 180, file: 'app/icon-180.png' },
     { size: 192, file: 'app/icon-192.png' },
-    { size: 512, file: 'app/icon-512.png' }
+    { size: 512, file: 'app/icon-512.png' },
+
+    // The one size Xcode needs: it derives the rest from this
+    { size: 1024, file: 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', optional: true }
 ];
 
 var SAMPLES = 3;
@@ -216,6 +219,12 @@ var root = path.join(__dirname, '..');
 
 SIZES.forEach(function(target) {
     var file = path.join(root, target.file);
+
+    if (target.optional && !fs.existsSync(path.dirname(file))) {
+        // The iOS project only exists once `npx cap add ios` has run
+        console.log('skipped ' + target.file + ' (no iOS project yet)');
+        return;
+    }
 
     fs.writeFileSync(file, png(target.size, render(target.size)));
     console.log('wrote ' + target.file + ' (' + target.size + 'px)');

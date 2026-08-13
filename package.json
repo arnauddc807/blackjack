@@ -9,15 +9,17 @@
     },
     "scripts": {
         "test": "node --test test/",
+        "start": "python3 -m http.server 8080",
         "icons": "node tools/make-icons.js",
-        "start": "python3 -m http.server 8080"
+        "build:app": "node tools/build-app.js",
+        "ios": "npm run build:app && npx cap sync ios && npx cap open ios"
     },
     "dependencies": {},
     "devDependencies": {
-        "grunt": "~0.4.2",
-        "grunt-contrib-jshint": "~0.6.3",
-        "grunt-contrib-nodeunit": "~0.2.0",
-        "grunt-contrib-uglify": "~0.2.2",
-        "grunt-contrib-concat": "~0.3.0"
+        "@capacitor/cli": "^6.1.2",
+        "@capacitor/core": "^6.1.2",
+        "@capacitor/haptics": "^6.0.1",
+        "@capacitor/ios": "^6.1.2",
+        "@capacitor/status-bar": "^6.0.1"
     }
 }

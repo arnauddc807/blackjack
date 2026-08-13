@@ -1,0 +1,10 @@
+{
+    "appId": "com.arnauddc807.blackjackcoach",
+    "appName": "Blackjack Coach",
+    "webDir": "www",
+    "backgroundColor": "#05130d",
+    "ios": {
+        "contentInset": "never",
+        "backgroundColor": "#05130d"
+    }
+}

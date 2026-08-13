@@ -72,6 +72,19 @@ Expected values are in units of the original bet: `+1` wins it outright, `-0.5` 
 
 **Utils** — `score(cards)` `hand(cards)` `value(card)` `isBlackjack(cards)` `counts(cards)` `total(counts)` `runningCount(cards)`
 
+## On an iPhone
+
+The same files also build as a real app, wrapped in a WKWebView shell by [Capacitor](https://capacitorjs.com). Needs a Mac with Xcode.
+
+```
+npm install
+npm run ios      # assembles www/, syncs it into the shell, opens Xcode
+```
+
+In Xcode: pick your team under Signing & Capabilities, choose your iPhone, and Run. On the phone, trust the certificate under Settings → General → VPN & Device Management. Signed with a free Apple ID an app stops launching after seven days and needs another Run; a paid account extends that to a year.
+
+The shell adds what a browser cannot: haptics on the cards, chips and verdicts, an app icon, a launch screen on felt rather than white, portrait lock, and storage the system will not evict. `app/feedback.js` is the seam — one call that plays a sound everywhere and also taps the Taptic Engine when it finds a native bridge, so the web build is unaffected.
+
 ## Development
 
 ```
