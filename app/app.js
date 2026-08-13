@@ -28,7 +28,8 @@
         doubleAfterSplit: true,
         surrender: true,
         coach: 'feedback',
-        showCount: false
+        showCount: false,
+        sound: true
     };
 
     var stats = blankStats();
@@ -335,11 +336,16 @@
 
     var seen = {};
 
-    function cardElement(key, card, faceDown, flip) {
+    function cardElement(key, card, faceDown, flip, delay) {
         var node = document.createElement('div');
         var fresh = !seen[key];
 
         seen[key] = true;
+
+        // Cards make their noise as they land, not as they are drawn
+        if (fresh) {
+            Blackjack.Sound.play(flip ? 'flip' : 'deal', (delay || 0) / 1000);
+        }
         node.className = 'card';
         node.dataset.key = key;
 
@@ -372,7 +378,7 @@
         container.style.setProperty('--fan', fan);
 
         entries.forEach(function(entry, index) {
-            var node = cardElement(entry.key, entry.card, entry.faceDown, entry.flip);
+            var node = cardElement(entry.key, entry.card, entry.faceDown, entry.flip, entry.delay);
             node.style.animationDelay = (entry.delay || 0) + 'ms';
             node.style.zIndex = String(index);
             container.appendChild(node);
@@ -653,6 +659,7 @@
             chip.disabled = bet + amount > bankroll;
             chip.addEventListener('click', function() {
                 bet = Math.min(bankroll, bet + amount);
+                Blackjack.Sound.play('chip');
                 renderControls();
             });
             chips.appendChild(chip);
@@ -665,6 +672,7 @@
         display.innerHTML = '<span class="label">Bet</span><span class="value">' + money(bet) + '</span>';
         display.addEventListener('click', function() {
             bet = 0;
+            Blackjack.Sound.play('chip');
             renderControls();
         });
         bar.appendChild(display);
@@ -834,6 +842,8 @@
         el('coachTitle').textContent = title;
         el('coachDetail').textContent = detail;
         el('coachBody').innerHTML = evRows(analysis, score.action) + coachNote(analysis, score.action);
+
+        Blackjack.Sound.play(score.verdict);
     }
 
     /* ---------------------------------------------------------------- flow */
@@ -859,6 +869,7 @@
         renderControls();
 
         if (game.shuffled) {
+            Blackjack.Sound.play('shuffle');
             banner('Fresh shoe', settings.decks + (settings.decks === 1 ? ' deck' : ' decks') + ' shuffled');
         } else {
             banner('', '');
@@ -912,6 +923,7 @@
             el('coachTitle').textContent = right ? 'Right call' : 'The other way was better';
             el('coachDetail').textContent = 'Insurance pays 2:1 and needs a ten under ' +
                 'more than a third of the time — this shoe is at ' + (tens * 100).toFixed(1) + '%';
+            Blackjack.Sound.play(right ? 'correct' : 'wrong');
             el('coachBody').innerHTML = '<div class="coach-note">Insurance is a side bet on the hole card being ' +
                 'a ten. Right now it returns <b>' + cents(ev) + '</b> per $1 staked. Unless you are counting and ' +
                 'the shoe is rich in tens, it is the worst bet on the table.</div>';
@@ -938,6 +950,7 @@
 
         var request = pending;
         var context = pendingState;
+        var before = game.active;
 
         busy = true;
 
@@ -954,6 +967,12 @@
         }
 
         bankroll = game.getBankroll();
+
+        var played = game.getHands()[before];
+
+        if (played && played.isBust()) {
+            Blackjack.Sound.play('bust', 0.12);
+        }
 
         renderDealer();
         renderPlayer();
@@ -1031,6 +1050,13 @@
         var sub;
         var dealerCards = game.getDealer().getCards();
         var dealerScore = Blackjack.Utils.score(dealerCards);
+        var natural = false;
+
+        for (var i = 0; i < results.length; i+=1) {
+            natural = natural || results[i].result === 'blackjack';
+        }
+
+        Blackjack.Sound.play(natural ? 'blackjack' : (net > 0 ? 'win' : (net < 0 ? 'lose' : 'push')));
 
         if (results.length === 1) {
             var result = results[0].result;
@@ -1334,6 +1360,22 @@
                 applyRules();
             })));
 
+        body.appendChild(settingRow('Sound', 'cards, chips and the verdict',
+            segmented([
+                { label: 'On', value: true },
+                { label: 'Off', value: false }
+            ], settings.sound, function(value) {
+                settings.sound = value;
+                Blackjack.Sound.setEnabled(value);
+
+                if (value) {
+                    Blackjack.Sound.play('chip');
+                }
+
+                save();
+                renderSettings();
+            })));
+
         body.appendChild(settingRow('Card counting line', 'show the running and true count',
             segmented([
                 { label: 'Show', value: true },
@@ -1439,6 +1481,17 @@
         document.addEventListener('gesturestart', function(event) {
             event.preventDefault();
         });
+
+        // iOS only lets audio start from inside a gesture, so the first
+        // touch anywhere opens the context
+        function wake() {
+            Blackjack.Sound.unlock();
+            document.removeEventListener('touchend', wake);
+            document.removeEventListener('mousedown', wake);
+        }
+
+        document.addEventListener('touchend', wake);
+        document.addEventListener('mousedown', wake);
     }
 
     function boot() {
@@ -1449,6 +1502,7 @@
         }
 
         restore();
+        Blackjack.Sound.setEnabled(settings.sound);
         newGame();
         bind();
         startWorker();

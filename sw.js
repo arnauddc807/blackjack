@@ -3,7 +3,7 @@
  * the network answers, so a deploy is never more than a reload away.
  */
 
-var CACHE = 'blackjack-coach-v1';
+var CACHE = 'blackjack-coach-v2';
 
 var ASSETS = [
     './',
@@ -11,6 +11,7 @@ var ASSETS = [
     'manifest.webmanifest',
     'app/app.css',
     'app/app.js',
+    'app/sound.js',
     'app/coach.worker.js',
     'app/icon.svg',
     'app/icon-180.png',

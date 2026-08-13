@@ -39,6 +39,7 @@ Two simplifications are worth naming: the two halves of a split are valued indep
 - **Chips and a bankroll.** Bet 5, 25 or 100. Blackjack pays 3:2.
 - **Everything a real table offers.** Splits to four hands, resplits, doubles, double after split, late surrender, insurance, and a dealer who peeks for a natural.
 - **A shoe with a cut card.** It runs down and gets reshuffled, and you can put the Hi-Lo running and true count on screen if you want to practise keeping it.
+- **The sound of a table.** Cards on felt, chips into the box, the riffle of a new shoe, and a couple of notes for the verdict and the payout — all synthesised in the browser, so there is nothing to download. Off with one tap in settings, and iOS's silent switch mutes it like anything else.
 - **Your own rules.** One to eight decks, dealer hits or stands on soft 17, double after split on or off, surrender on or off. Change any of them and the coach, the chart and the odds all follow.
 
 ## Learning
@@ -59,6 +60,7 @@ No framework, no build step, no dependencies. Three libraries and an interface, 
 | `src/Strategy.js` | The solver, plus the basic strategy chart. |
 | `src/Utils.js` | Hand scoring, soft totals, card counting helpers. |
 | `src/Probability.js` | The original win/lose/push probability library, untouched. |
+| `app/sound.js` | Every noise the table makes, built from oscillators and filtered noise. |
 | `app/` | The interface, the styles, and the worker the solver runs in. |
 
 ```js
