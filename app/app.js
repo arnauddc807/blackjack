@@ -344,7 +344,7 @@
 
         // Cards make their noise as they land, not as they are drawn
         if (fresh) {
-            Blackjack.Sound.play(flip ? 'flip' : 'deal', (delay || 0) / 1000);
+            Blackjack.Feedback.emit(flip ? 'flip' : 'deal', (delay || 0) / 1000);
         }
         node.className = 'card';
         node.dataset.key = key;
@@ -659,7 +659,7 @@
             chip.disabled = bet + amount > bankroll;
             chip.addEventListener('click', function() {
                 bet = Math.min(bankroll, bet + amount);
-                Blackjack.Sound.play('chip');
+                Blackjack.Feedback.emit('chip');
                 renderControls();
             });
             chips.appendChild(chip);
@@ -672,7 +672,7 @@
         display.innerHTML = '<span class="label">Bet</span><span class="value">' + money(bet) + '</span>';
         display.addEventListener('click', function() {
             bet = 0;
-            Blackjack.Sound.play('chip');
+            Blackjack.Feedback.emit('chip');
             renderControls();
         });
         bar.appendChild(display);
@@ -843,7 +843,7 @@
         el('coachDetail').textContent = detail;
         el('coachBody').innerHTML = evRows(analysis, score.action) + coachNote(analysis, score.action);
 
-        Blackjack.Sound.play(score.verdict);
+        Blackjack.Feedback.emit(score.verdict);
     }
 
     /* ---------------------------------------------------------------- flow */
@@ -869,7 +869,7 @@
         renderControls();
 
         if (game.shuffled) {
-            Blackjack.Sound.play('shuffle');
+            Blackjack.Feedback.emit('shuffle');
             banner('Fresh shoe', settings.decks + (settings.decks === 1 ? ' deck' : ' decks') + ' shuffled');
         } else {
             banner('', '');
@@ -923,7 +923,7 @@
             el('coachTitle').textContent = right ? 'Right call' : 'The other way was better';
             el('coachDetail').textContent = 'Insurance pays 2:1 and needs a ten under ' +
                 'more than a third of the time — this shoe is at ' + (tens * 100).toFixed(1) + '%';
-            Blackjack.Sound.play(right ? 'correct' : 'wrong');
+            Blackjack.Feedback.emit(right ? 'correct' : 'wrong');
             el('coachBody').innerHTML = '<div class="coach-note">Insurance is a side bet on the hole card being ' +
                 'a ten. Right now it returns <b>' + cents(ev) + '</b> per $1 staked. Unless you are counting and ' +
                 'the shoe is rich in tens, it is the worst bet on the table.</div>';
@@ -971,7 +971,7 @@
         var played = game.getHands()[before];
 
         if (played && played.isBust()) {
-            Blackjack.Sound.play('bust', 0.12);
+            Blackjack.Feedback.emit('bust', 0.12);
         }
 
         renderDealer();
@@ -1056,7 +1056,7 @@
             natural = natural || results[i].result === 'blackjack';
         }
 
-        Blackjack.Sound.play(natural ? 'blackjack' : (net > 0 ? 'win' : (net < 0 ? 'lose' : 'push')));
+        Blackjack.Feedback.emit(natural ? 'blackjack' : (net > 0 ? 'win' : (net < 0 ? 'lose' : 'push')));
 
         if (results.length === 1) {
             var result = results[0].result;
@@ -1369,7 +1369,7 @@
                 Blackjack.Sound.setEnabled(value);
 
                 if (value) {
-                    Blackjack.Sound.play('chip');
+                    Blackjack.Feedback.emit('chip');
                 }
 
                 save();
@@ -1494,14 +1494,36 @@
         document.addEventListener('mousedown', wake);
     }
 
+    /**
+     * Settle the parts of the native shell that only exist on a phone.
+     * On the web this finds nothing and does nothing.
+     */
+    function nativeShell() {
+        var plugins = window.Capacitor && window.Capacitor.Plugins;
+
+        if (!plugins || !plugins.StatusBar) {
+            return;
+        }
+
+        try {
+            // Light glyphs, because the felt runs under the status bar
+            plugins.StatusBar.setStyle({ style: 'DARK' });
+        } catch (error) {
+            // Older shells without the plugin are no reason to stop
+        }
+    }
+
     function boot() {
-        if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+        // The native shell already has every file in its bundle, and
+        // ships without sw.js. Only the web build wants a worker.
+        if (!window.Capacitor && 'serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
             navigator.serviceWorker.register('sw.js').catch(function() {
                 // Offline play is a bonus, not a requirement
             });
         }
 
         restore();
+        nativeShell();
         Blackjack.Sound.setEnabled(settings.sound);
         newGame();
         bind();
